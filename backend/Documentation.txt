@@ -83,21 +83,11 @@ Execute "flask run" in backend directory to run after installing dependences
 ├── flaskr
 │   ├── __init__.py ** the main driver of the app. 
 ├── models.py - Database - setup and models              
+├── startup.sh - Sets up environment variables required for access to database and debugging 
 ├── test_flaskr.py - Tests all application API points for success and failures
 ├── requirements.txt *** The dependencies we need to install with "pip3 install -r requirements.txt"
 ├── trivia.psql Schema and data for sample database. Refer above on how to use it.
 
-
-# │   ├── css 
-# │   ├── font
-# │   ├── ico
-# │   ├── img
-# │   └── js
-# └── templates
-#     ├── errors
-#     ├── forms
-#     ├── layouts
-#     └── pages
 
 Overall:
 
@@ -143,9 +133,10 @@ JSON Response:
             'currentCategory': 
 })
 
-Sample:
+Sample request:
 
 curl -X GET http://localhost:3000/questions
+Sample response:
 {
   "categories": {
     "1": "Science", 
@@ -238,7 +229,7 @@ Errors:
 Returned when resource not found. 
 e.g. : Trying to find questions which don't exisit
 curl -X GET http://localhost:3000/questions?page=3
-Returns the following JSON as no data is available for page 3
+Returns the following JSON response as no data is available for page 3
 {
   "error": 404, 
   "message": "resource not found", 
@@ -255,7 +246,7 @@ curl http://127.0.0.1:5000/questions/13 -X DELETE
   "success": true
 }
 
-Error:
+Error: When the question with specified ID does not exist.
 
 curl http://127.0.0.1:5000/questions/13 -X DELETE
 {
@@ -307,7 +298,7 @@ Generic error, due to other reasons 422:
 #2 Searching a based on text (case insensitve) in the question text attribute (doesn't look in answer or category).
 Sample JSON request and response: 
 
-Search Success:
+Search Success Sample request and response:
 curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d '{"searchTerm":"space"}'
 {
   "currentCategory": 5, 
@@ -323,7 +314,7 @@ curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json"
   "success": true, 
   "totalQuestions": 1
 }
-Search failure:
+Search failure Sample request and response:
 
  curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d '{"searchTerm":"colors"}'
 {
@@ -336,6 +327,7 @@ Search failure:
 5. GET /categories/6/questions
 
 Gets questions for a specific category only. Sample JSON request and response (format is similar to GET for question):
+
 curl -X GET http://localhost:3000/categories/6/questions
 {
   "categories": {
@@ -367,12 +359,13 @@ curl -X GET http://localhost:3000/categories/6/questions
   "totalQuestions": 2
 }
 
-Returns 404 if no question in asked category.
+Returns 404 if no question in requested category.
 
 
 6. POST /quizzes
 
 Plays 5 different questions of the selected category as a quiz. Returns only one question at time. Previous questions is a list of ID's of those questions being played in this attempt of the quiz. 
+Sample request and response:
 
 curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -d '{"previous_questions":[],"quiz_category":{"type":"Sports","id":"6"}}'
 {
