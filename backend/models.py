@@ -4,7 +4,13 @@ from flask_sqlalchemy import SQLAlchemy
 import json
 
 database_name = "trivia"
-database_path = "postgres://{}/{}".format('localhost:5432', database_name)
+# database_path = "postgres://{}/{}".format('localhost:5432', database_name)
+# user_name = "postgres"
+# password = "postgres"
+user_name = os.environ.get('TRIVIA_DB_USER')
+password = os.environ.get('TRIVIA_DB_PASSWORD')
+database_path = "postgres://{}:{}@{}/{}".format(user_name, password,'localhost:5432', database_name)
+
 
 db = SQLAlchemy()
 
@@ -29,14 +35,21 @@ class Question(db.Model):
   id = Column(Integer, primary_key=True)
   question = Column(String)
   answer = Column(String)
-  category = Column(String)
+  # category = Column(String)
+  category = Column(Integer)
   difficulty = Column(Integer)
 
   def __init__(self, question, answer, category, difficulty):
+    print("Trying to initialize")
     self.question = question
     self.answer = answer
     self.category = category
     self.difficulty = difficulty
+    print("Initialized")
+
+  
+  def __repr__(self):
+    return json.dumps(self.format())
 
   def insert(self):
     db.session.add(self)
