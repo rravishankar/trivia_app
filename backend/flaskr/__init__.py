@@ -11,6 +11,8 @@ QUESTIONS_PER_PAGE = 10
 #TBD: Change it to None later and see
 currentCategory = 5
 
+#TBD use logger instead of print statements
+
 def paginate_questions(request, selection):
   page = request.args.get('page',1, type=int)
   start = (page-1) * QUESTIONS_PER_PAGE
@@ -51,24 +53,20 @@ def create_app(test_config=None):
   @app.route('/categories')
   def get_categories():
       categories = Category.query.order_by(Category.type).all()
-      print("get_categories:\n\nGot categories", categories)
+      # print("get_categories:\n\nGot categories", categories)
       # categories_json_ready = [category.format() for category in categories]
       categories_json_ready = {category.id: category.type for category in categories}
       my_json = {
             'success': True,
             'categories': categories_json_ready,
       }
-      print("get_categories:Returning JSON", my_json)
+      # print("get_categories:Returning JSON", my_json)
       return jsonify({
             'success': True,
             'categories': categories_json_ready,
         })
 
 
-# This is a great way This is a great way This is a great way This is a great
-# way This is a great way This is a great way This is a great way This is a
-# great way This is a great way This is a great way This is a great way This is
-# a great way This is a great way This is a great way 
   '''
   @TODO: 
   Create an endpoint to handle GET requests for questions, 
@@ -96,10 +94,10 @@ def create_app(test_config=None):
 
       if len(formatted_ques) == 0:
         abort(404)
-      print("Got questions", formatted_ques)
+      # print("Got questions", formatted_ques)
 
       categories = Category.query.order_by(Category.type).all()
-      print("\n\nGot categories", categories)
+      # print("\n\nGot categories", categories)
       # categories_json_ready = [category.format() for category in categories]
       categories_json_ready = {category.id: category.type for category in categories}
       my_json = {
@@ -130,18 +128,18 @@ def create_app(test_config=None):
   @app.route('/questions/<int:que_id>', methods=['DELETE'])
   def delete_question(que_id):
     errno = 0
-    print("delete_question: Entered with id ", que_id)
+    # print("delete_question: Entered with id ", que_id)
     try:
-      print("delete_question: Querying for que_id", que_id)
+      # print("delete_question: Querying for que_id", que_id)
       que = Question.query.get(que_id)
       
       if que == None:
-        print("delete_question: Got no question ", que_id)
+        # print("delete_question: Got no question ", que_id)
         errno = 404
         abort(errno)
 
       que.delete()
-      print("delete_question: Got question for id", que_id)
+      # print("delete_question: Got question for id", que_id)
       return jsonify({
         'success': True
       })
@@ -175,19 +173,19 @@ def create_app(test_config=None):
   @app.route('/questions', methods=['POST'])
   def add_question_or_search():
     req_data_dict = json.loads(request.data)
-    print("add_question_or_search:Got req data dict json",req_data_dict, type(req_data_dict))
+    # print("add_question_or_search:Got req data dict json",req_data_dict, type(req_data_dict))
     got_create_request,got_search_request = False, False
     # Two possibilities - if it's a search request JSON data contains key search
     # if a create request we get key - title author rating
     #     
     if "searchTerm" in req_data_dict:
-      print("add_question_or_search:Got search in request data keys")
+      # print("add_question_or_search:Got search in request data keys")
       got_search_request = True
     elif "question" in req_data_dict:
-      print("add_question_or_search: Got question, add request")
+      # print("add_question_or_search: Got question, add request")
       got_create_request = True
     else:
-      print("add_question_or_search:Got neither")
+      # print("add_question_or_search:Got neither")
       abort(400)
 
     if got_create_request:
@@ -196,23 +194,23 @@ def create_app(test_config=None):
         answer = req_data_dict["answer"]
         category = req_data_dict["category"]
         difficulty = req_data_dict["difficulty"]
-        print("add_question_or_search:Got keys", question, answer, category, difficulty)
+        # print("add_question_or_search:Got keys", question, answer, category, difficulty)
         
         if len(question) == 0 or len(answer) == 0:
-          print("add_question_or_search: Error got zero length question or answer, not allowed. Enter a valid question & answer")
+          # print("add_question_or_search: Error got zero length question or answer, not allowed. Enter a valid question & answer")
           abort(400)
 
 
         que = Question(question=question, answer=answer, category=category, difficulty=difficulty)
-        print("add_question_or_search:Attempting to insert question", que)
+        # print("add_question_or_search:Attempting to insert question", que)
 
-        if que == None:
-          print ("add_question_or_search:que is None")
-        else:
-          print("add_question_or_search:Attempting to insert question", que)
+        # if que == None:
+        #   print ("add_question_or_search:que is None")
+        # else:
+        #   print("add_question_or_search:Attempting to insert question", que)
         que.insert()
         que_id = que.id
-        print("add_question_or_search:Inserted question:", que.format())
+        # print("add_question_or_search:Inserted question:", que.format())
         return jsonify({
             'success': True
         })
@@ -228,7 +226,7 @@ def create_app(test_config=None):
         que_query = Question.query.filter(Question.question.ilike('%' + search_que + '%'))
         formatted_questions = paginate_questions(request, que_query)
         # all_books = Book.query.all()
-        print("add_question_or_search:Got data for search request ", formatted_questions, len(formatted_questions))
+        # print("add_question_or_search:Got data for search request ", formatted_questions, len(formatted_questions))
         return jsonify({
           'success': True,        
           'questions': formatted_questions,
@@ -274,10 +272,10 @@ def create_app(test_config=None):
 
       if len(formatted_ques) == 0:
         abort(404)
-      print("get_cat_questions:Got questions", formatted_ques)
+      # print("get_cat_questions:Got questions", formatted_ques)
 
       categories = Category.query.order_by(Category.type).all()
-      print("\n\nget_cat_questions:Got categories", categories)
+      # print("\n\nget_cat_questions:Got categories", categories)
       # categories_json_ready = [category.format() for category in categories]
       categories_json_ready = {category.id: category.type for category in categories}
       my_json = {
@@ -287,7 +285,7 @@ def create_app(test_config=None):
             'categories': categories_json_ready,
             'currentCategory': currentCategory
       }
-      print("get_cat_questions: Returning JSON", my_json)
+      # print("get_cat_questions: Returning JSON", my_json)
       return jsonify({
             'success': True,
             'questions': formatted_ques,
@@ -311,37 +309,38 @@ def create_app(test_config=None):
   @app.route('/quizzes', methods=['POST'])
   def quiz():
     req_data_dict = json.loads(request.data)
-    print("quiz:Got req data dict json",req_data_dict, type(req_data_dict))
+    # print("quiz:Got req data dict json",req_data_dict, type(req_data_dict))
     got_create_request,got_search_request = False, False
     # Two possibilities - if it's a search request JSON data contains key search
     # if a create request we get key - title author rating
     #     
     if "previous_questions" in req_data_dict:
-      print("quiz:Valid quiz request data previous_questions found")
+      # print("quiz:Valid quiz request data previous_questions found")
+      pass
     else:
-      print("quiz:Invalid. previous_questions key not in JSON data")
+      # print("quiz:Invalid. previous_questions key not in JSON data")
       abort(400)
 
     try:
       previous_questions = req_data_dict["previous_questions"]
       quiz_category_id_str = req_data_dict["quiz_category"]["id"]
       quiz_category_id = int(quiz_category_id_str)
-      print("quiz:Got keys previous_questions (id):{} quiz_category (id):{}".format(previous_questions, quiz_category_id))
-      print("Type of quiz cat", type(quiz_category_id))
+      # print("quiz:Got keys previous_questions (id):{} quiz_category (id):{}".format(previous_questions, quiz_category_id))
+      # print("Type of quiz cat", type(quiz_category_id))
 
 
       if quiz_category_id > 0:
         questions = Question.query.filter(Question.category == quiz_category_id).all()
       else:
         questions = Question.query.all()
-      print("Got following questions for category {}:\n{}".format(quiz_category_id, questions))
+      # print("Got following questions for category {}:\n{}".format(quiz_category_id, questions))
       
       # TBD: Optimize later to use only one copy of the list
       # sending_que = {}
       sending_que = None
       for que in list(questions):
         if que.id in previous_questions:
-          print("Removing id:{} from questions".format(que.id))
+          # print("Removing id:{} from questions".format(que.id))
           questions.remove(que)
       
       random.seed() #Random seed based on current system time

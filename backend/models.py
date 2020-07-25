@@ -40,12 +40,12 @@ class Question(db.Model):
   difficulty = Column(Integer)
 
   def __init__(self, question, answer, category, difficulty):
-    print("Trying to initialize")
+    # print("Trying to initialize")
     self.question = question
     self.answer = answer
     self.category = category
     self.difficulty = difficulty
-    print("Initialized")
+    # print("Initialized")
 
   
   def __repr__(self):
